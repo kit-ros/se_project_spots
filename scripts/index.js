@@ -48,6 +48,37 @@ const postFormSave = document.querySelector("#post-form-button");
 const cardImageInput = document.querySelector("#card-image-input");
 const cardCaptionInput = document.querySelector("#card-caption-input");
 
+const cardTemplate = document
+  .querySelector("#card-template")
+  .content.querySelector(".card");
+
+const cardsList = document.querySelector(".cards__list");
+
+function getCardElement(data) {
+  const cardElement = cardTemplate.cloneNode(true);
+
+  const cardImage = cardElement.querySelector(".card__image");
+  const cardTitle = cardElement.querySelector(".card__text");
+
+  cardImage.setAttribute("src", data.link);
+  cardTitle.setAttribute("alt", data.name);
+  cardTitle.textContent = data.name;
+
+  const likeButton = cardElement.querySelector(".card__like-btn");
+
+  likeButton.addEventListener("click", function (evt) {
+    evt.target.classList.toggle("card__like-btn_liked");
+  });
+
+  const deleteButton = cardElement.querySelector(".card__delete-btn");
+
+  deleteButton.addEventListener("click", function () {
+    cardElement.remove();
+  });
+
+  return cardElement;
+}
+
 function openModal(modal) {
   modal.classList.add("modal_is-opened");
 }
@@ -75,7 +106,9 @@ newPostClose.addEventListener("click", function () {
 });
 
 initialCards.forEach(function (card) {
-  console.log(card.name);
+  const initialCard = getCardElement(card);
+
+  cardsList.append(initialCard);
 });
 
 profileNameInput.value = profileNameActive.textContent;
@@ -93,8 +126,15 @@ profileForm.addEventListener("submit", function (e) {
 postForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  console.log(cardImageInput.value);
-  console.log(cardCaptionInput.value);
+  const postedCardData = [
+    { name: cardCaptionInput.value, link: cardImageInput.value },
+  ];
+
+  postedCardData.forEach(function (card) {
+    const postedCard = getCardElement(card);
+
+    cardsList.prepend(postedCard);
+  });
 
   closeModal(newPostModal);
 
